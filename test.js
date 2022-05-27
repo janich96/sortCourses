@@ -72,3 +72,120 @@ function sortCourses(courses, value) {
 
 // console.log(sortCourses(courses, 'ascending'));
 // console.log(sortCourses(courses, 'descending'));
+
+
+// Ещё вариант - быстрая сортировка, так как webkit использует быструю сортировку для числовых значений 
+// и сортировку слиянием для нечисловых значений, но spider monkey в firefox 
+// использует только сортировку слиянием
+
+// Функция быстрой сортировки - сортируем суммы минимальной и максимальной цены за курс
+function quickSort(array, value, left = 0, right = array.length - 1) {
+
+    // Функция смены значений - меняет между собой левое и правое значение
+    function swap(array, left, right) {
+        const temp = array[left];
+        array[left] = array[right];
+        array[right] = temp;
+    }
+
+    // Обработчик null - при наличии null возвращает ноль вместо значения 
+    function nullHandler(item) {
+        if (item === null) {
+            return 0;
+        } else {
+            return item;
+        }
+    }
+    
+    // Сортировка по возрастанию
+    if (value === 'ascending') {
+
+        // Функция поиска опорного элемента массива и смены элементов, если они не соответсвтуют
+        // условиям сортировки
+        function findPivot(array, left, right) {
+            const pivot = Math.floor((left + right) / 2);
+            const pivotValue = nullHandler(array[pivot].prices[0]) + nullHandler(array[pivot].prices[1]);
+    
+            while(left <= right) {
+                // Пока значение элемента левого указателя меньше значения опорного элемента,
+                // сдвигаем левый указатель вправо
+                while(nullHandler(array[left].prices[0]) + nullHandler(array[left].prices[1]) < pivotValue) {
+                    left++;
+                }
+                // Пока значение элемента правого указателя больше значения опорного элемента,
+                // сдвигаем правый указатель влево
+                while(nullHandler(array[right].prices[0]) + nullHandler(array[right].prices[1]) > pivotValue) {
+                    right--;
+                }
+                if (left <= right) {
+                    // Меняем правый и левый элементы местами
+                    swap(array, left, right);
+                    left++;
+                    right--;
+                }
+            }
+            // Возвращаем новый опорный элемент
+            return left;
+        }
+
+        // Определяем опорный элемент
+        const pivot = findPivot(array, left, right);
+
+        // Вызываем функцию сортировки
+        if (left < pivot - 1) {
+            quickSort(array, 'ascending', left, pivot - 1);
+        }
+        if (right > pivot) {
+            quickSort(array, 'ascending', pivot, right);
+        }
+    }
+
+    // Сортировка по убыванию
+    if (value === 'descending') {
+
+        // Функция поиска опорного элемента массива и смены элементов, если они не соответсвтуют
+        // условиям сортировки
+        function findPivot(array, left, right) {
+            const pivot = Math.floor((left + right) / 2);
+            const pivotValue = nullHandler(array[pivot].prices[0]) + nullHandler(array[pivot].prices[1]);
+    
+            while(left <= right) {
+                // Пока значение элемента левого указателя больше значения опорного элемента,
+                // сдвигаем левый указатель вправо
+                while(nullHandler(array[left].prices[0]) + nullHandler(array[left].prices[1]) > pivotValue) {
+                    left++;
+                }
+                // Пока значение элемента правого указателя меньше значения опорного элемента,
+                // сдвигаем правый указатель влево
+                while(nullHandler(array[right].prices[0]) + nullHandler(array[right].prices[1]) < pivotValue) {
+                    right--;
+                }
+                if (left <= right) {
+                    // Меняем правый и левый элементы местами
+                    swap(array, left, right);
+                    left++;
+                    right--;
+                }
+            }
+            // Возвращаем новый опорный элемент
+            return left;
+        }
+
+        // Определяем опорный элемент
+        const pivot = findPivot(array, left, right);
+
+        // Вызываем функцию сортировки
+        if (left < pivot - 1) {
+            quickSort(array, 'descending', left, pivot - 1);
+        }
+        if (right > pivot) {
+            quickSort(array, 'descending', pivot, right);
+        }
+    }
+
+    // Возвращаем результат - отсортированный массив
+    return array;
+}
+
+// console.log(quickSort(courses, 'ascending'));
+// console.log(quickSort(courses, 'descending'));
